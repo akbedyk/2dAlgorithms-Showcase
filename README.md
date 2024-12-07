@@ -11,7 +11,7 @@
  *
  * This algorithm is close to the Ramer–Douglas–Peucker algorithm on a curve.
  * 
- * 2024 Mintmike (c)
+ * 2024 Mike Akbedyk (c)
 
 
 
