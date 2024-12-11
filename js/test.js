@@ -55,5 +55,3 @@ function isPointNearTheLine_test() {
 		})
 	})
 }
-
-
