@@ -34,6 +34,17 @@ function setPointSize(size) {
 
 $.strokeRect(0, 0,canvas_width, canvas_hight);
 
+/** 
+ * Mark the path points with rects
+*/
+function markPathPoints(path) {
+	for (var i = 0; i < path.length; i++) {
+		point = path[i];
+		$.strokeRect(point.x - point_halth_size, point.y - point_halth_size, point_size, point_size);
+	}
+}
+
+
 function setStrokeStyle(style) {
 	$.strokeStyle = style;
 }
@@ -106,16 +117,6 @@ function drawScreenLine(xc, yc, xn, yn) {
 	saveBoundary(canvas_hight, (canvas_hight - b)/a, true);
 
 	drawLine(x1, y1, x2, y2);
-}
-
-/** 
- * Mark the path points with rects
-*/
-function markPathPoints(path) {
-	for (var i = 0; i < path.length; i++) {
-		point = path[i];
-		$.strokeRect(point.x - point_halth_size, point.y - point_halth_size, point_size, point_size);
-	}
 }
 
 let path_start_x = 30;
