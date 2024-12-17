@@ -25,7 +25,8 @@ cgrid.random_edges_test(70)
 scene.add(cgrid)
 cgrid.draw(r2d)
 
-let result = JPS(cgrid.edges, 0, cgrid.height, 0, 0, cgrid.height, cgrid.width, 
-				(g,x,y) => true, 
-                (g,x,y,gx,gy) => 1)
+let max = cgrid.height - 1
+let result = JPS(cgrid.edges, 0, max, 0, 0, max, max, 
+				(g,x,y) => { if((x>=0)&&(x<=max)&&(y>=0)&&(y<=max)) return true}, 
+                (g,x,y,gx,gy) => { return 1})
 
