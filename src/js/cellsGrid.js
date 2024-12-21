@@ -115,6 +115,7 @@ export class CellsGrid {
 	}
 
 	isEdgePassabe(x, y, edge_index) {
+		if (!this._edge[x]) console.log('this._edge[x] is undefind:', x, y)
 		return Boolean(this._edge[x][y] & (1 << edge_index))
 	}
 
@@ -155,7 +156,7 @@ export class CellsGrid {
 	}
 
 	addRandomEdges(density) {
-		const d = Math.floor(density / 2) || 100
+		const d = Math.floor(density / 2)
 		for (var i = d; i > 0; i--) {
 			let x = Math.floor(Math.random() * this.width)
 			let y = Math.floor(Math.random() * this.height)
@@ -256,12 +257,13 @@ export class CellsGrid {
 	drawPaths(r2d) {
 		const edge_pix = this._edge_size * DEFAULT_STEP_PIX
 		for (let path of this._paths) {
+			let pn = path[path.length - 1]
 			for (var i = path.length - 1; i > 0; i--) {
-				let pn = path[i]
 				let p = path[i-1]
-				if (pn && p) {
-					r2d.drawLine((path[i][0]+0.5)*edge_pix, (path[i][1]+0.5)*edge_pix,
-						(path[i-1][0]+0.5)*edge_pix, (path[i-1][1]+0.5)*edge_pix)
+				if (p) {
+					r2d.drawLine((pn[0]+0.5)*edge_pix, (pn[1]+0.5)*edge_pix, 
+						(p[0]+0.5)*edge_pix, (p[1]+0.5)*edge_pix)
+					pn = p
 				}
 			}
 		}

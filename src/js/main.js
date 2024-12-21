@@ -22,20 +22,21 @@ const r2d = new Render2d(document.querySelector("canvas"))
 const scene = new Scene()
 
 const cgrid = new CellsGrid()
-cgrid.addRandomEdges(70)
+cgrid.addRandomEdges(50)
 scene.add(cgrid)
 cgrid.draw(r2d)
 
-
-
 const max = cgrid.height - 1
-const grid = JPS(0, max, 0, 0, max, max, 
+const grid = JPS(0, max, 0, 0, max, max,
 				(x,y,ie) => { if((x>=0)&&(x<=max)&&(y>=0)&&(y<=max)) return cgrid.isEdgePassabe(x,y,ie); else return false}, 
-                (x,y,gx,gy) =>  { return abs(gx - x) + abs(gy - y)}, // { return Math.sqrt((gx-x)*(gx-x) + (gy-y)*(gy-y))},
+                (x,y,gx,gy) => 
+                //{ return abs(gx - x) + abs(gy - y)},
+                { return Math.sqrt((gx-x)*(gx-x) + (gy-y)*(gy-y))},
                 (x,y) => { cgrid.drawCellMarker(r2d,x,y)},
                 (style) => { r2d.setStrokeStyle(style)},
                 )
 
+1
 
 console.log('Grid:', grid)
 const path = buildPath(grid, max, max,)
