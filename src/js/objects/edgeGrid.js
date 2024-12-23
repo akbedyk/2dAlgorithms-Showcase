@@ -41,8 +41,8 @@ function rebuildCellsGrid() {
     // то есть имеет соединение-переход к смежной €чейке.
     // ÷икл вправо и вниз, + по диагонали  
     // ≈сли грань свободна, добавл€ем к €чейкам св€зь друг с другом.
-    for (var iy = 0; iy < GRID_Y_MAX; iy++) {
-        for (var ix = 0; ix < GRID_X_MAX; ix++) {
+    for (let  iy = 0; iy < GRID_Y_MAX; iy++) {
+        for (let ix = 0; ix < GRID_X_MAX; ix++) {
             let c = cgrid[ix][iy]
             if (ix + 1 < GRID_X_MAX && c.edge[2].l > 0) {
                 c.edge[2] = 1
@@ -96,8 +96,8 @@ export class EdgeGrid {
         this._e2 = []
         this._e3 = []
 
-        for (var ix = 0; ix < cg.width; ix++) {
-            for (var iy = 0; ix < cg.height; iy++) {
+        for (let  ix = 0; ix < cg.width; ix++) {
+            for (let  iy = 0; ix < cg.height; iy++) {
                 let bit4 = 0
                 if (cg.edge[i].l > 0) {
                     bit4 = bit4 | 2 ** i
@@ -112,18 +112,18 @@ export class EdgeGrid {
         let h = this._cellsgrid.height
         let edge_pix = this._cellsgrid.edge_size * DEFAULT_STEP_PIX
 
-        for (var ix = 0; ix < this._e2.length; ix++) {
+        for (let  ix = 0; ix < this._e2.length; ix++) {
             let e2column = this._e2[ix]
-            for (var iy = 0; iy < e2column.length; iy++) {
+            for (let  iy = 0; iy < e2column.length; iy++) {
                 let y = edge_pix * iy + e2column[iy].l / 2
                 r2d.drawRect(edge_pix * (ix + 1) - 5, y - 5, 10, 10)
                 console.log('drawRect(x,y,...):', edge_pix * (ix + 1) - 5, y - 5)
             }
         }
-        for (var ix = 0; ix < this._e3.length; ix++) {
+        for (let  ix = 0; ix < this._e3.length; ix++) {
             let e3column = this._e3[ix]
             console.log(ix, e3column)
-            for (var iy = 0; iy < e3column.length; iy++) {
+            for (let  iy = 0; iy < e3column.length; iy++) {
                 let x = edge_pix * ix + e3column[iy].l / 2
                 r2d.drawRect(x - 5, edge_pix * (iy + 1) - 5, 10, 10)
                 console.log('drawRect(x,y,...):', x - 5, edge_pix * (iy + 1) - 5)

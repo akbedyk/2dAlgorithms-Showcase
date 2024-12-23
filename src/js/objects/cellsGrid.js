@@ -1,10 +1,18 @@
-import {Render2d} from "./render2d.js"
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+*/
+const random = Math.random
+const floor = Math.floor
 
-const DEFAULT_CELL_GRID_WIDTH = 25;
-const DEFAULT_CELL_GRID_HEIGHT = 25;
-const DEFAULT_EDGE_SIZE = 32;
-const DEFAULT_STEP_PIX = 1;
-const DEFAULT_MARKER_SIZE = 16;
+const DEFAULT_CELL_GRID_WIDTH = 25
+const DEFAULT_CELL_GRID_HEIGHT = 25
+const DEFAULT_EDGE_SIZE = 32
+const DEFAULT_MARKER_SIZE = 16
 
 export default class Cell {
 
@@ -66,10 +74,10 @@ export class CellsGrid {
 		this._paths = []
 
 		// fill arrays with cells & edges
-		for (var ix = 0; ix < this._width; ix++) {
+		for (let ix = 0; ix < this._width; ix++) {
 			let cc = Array(this._height)
 			let ec = Array(this._height)
-			for (var iy = 0; iy < this._height; iy++) {
+			for (let iy = 0; iy < this._height; iy++) {
 				// build cells objects
 				cc[iy] = new Cell(ix, iy, 0)
 				let edges_4bit = 0b1111         // edge mask
@@ -106,9 +114,9 @@ export class CellsGrid {
 	}
 
 	forEachElement(array2d, func) {
-		for (var ix = 0; ix < this._width; ix++) {
+		for (let ix = 0; ix < this._width; ix++) {
 			let column = array2d[ix]
-			for (var iy = 0; iy < this._height; iy++) {
+			for (let iy = 0; iy < this._height; iy++) {
 				func(column[iy], ix, iy)
 			}
 		}
@@ -156,18 +164,18 @@ export class CellsGrid {
 	}
 
 	addRandomEdges(density) {
-		const d = Math.floor(density / 2)
-		for (var i = d; i > 0; i--) {
-			let x = Math.floor(Math.random() * this.width)
-			let y = Math.floor(Math.random() * this.height)
+		const d = floor(density / 2)
+		for (let i = d; i > 0; i--) {
+			let x = floor(random() * this.width)
+			let y = floor(random() * this.height)
 			if (x != this.width - 1) {
 				this._edge[x][y] &= 0b0111
 				this._edge[x+1][y] &= 0b1101
 			}
 		}
-		for (var i = d; i > 0; i--) {
-			let x = Math.floor(Math.random() * this.width)
-			let y = Math.floor(Math.random() * this.height)
+		for (let i = d; i > 0; i--) {
+			let x = floor(random() * this.width)
+			let y = floor(random() * this.height)
 			if (y != this.height - 1) {
 				this._edge[x][y] &= 0b1011
 				this._edge[x][y+1] &= 0b1110
@@ -175,26 +183,57 @@ export class CellsGrid {
 		}
 
 		/*
-		for (var i = d; i > 0; i--) {
-			let x = Math.floor(Math.random() * this.width)
-			let y = Math.floor(Math.random() * this.height)
+		for (let i = d; i > 0; i--) {
+			let x = floor(random() * this.width)
+			let y = floor(random() * this.height)
 			this._edge[x][y] &= 0b1011
 		}
-		for (var i = d; i > 0; i--) {
-			let x = Math.floor(Math.random() * this.width)
-			let y = Math.floor(Math.random() * this.height)
+		for (let i = d; i > 0; i--) {
+			let x = floor(random() * this.width)
+			let y = floor(random() * this.height)
 			this._edge[x][y] &= 0b0111
 		}
-		for (var i = d; i > 0; i--) {
-			let x = Math.floor(Math.random() * this.width)
-			let y = Math.floor(Math.random() * this.height)
+		for (let i = d; i > 0; i--) {
+			let x = floor(random() * this.width)
+			let y = floor(random() * this.height)
 			this._edge[x][y] &= 0b1110
 		}
 		*/
 	}
 
+	randomPath(n) {
+
+		const path = Array(n)
+		console.log('randomPath: path.length', path.length)
+		const w = this.width
+		const h = this.height
+		
+		const grid = Array(w)
+		for (let ix = grid.length - 1; ix >= 0; ix--) {
+			grid[ix] = Array(h)
+		}
+
+		const tmax = 1000
+		let x = floor(random() * w)
+		let y = floor(random() * h)
+
+		for (let i = path.length - 1; i >= 0; i--) {
+			let t = 0
+			while (grid[x][y] && t <= tmax) {
+				x = floor(random() * w)
+				y = floor(random() * h)
+				t++
+			}
+			console.log('randomPath: add the point', [x,y])
+			path[i] = [x,y]
+			grid[x][y] = true
+		}
+		console.log('Path:', path)
+		return path
+	}
+
 	addPath(path) {
-		this._paths.push(path)	
+		this._paths.push(path)
 	}
 
 	popPath() {
@@ -203,66 +242,63 @@ export class CellsGrid {
 
 	drawCells(r2d) {
 		// calculate the edge lengths in pixels
-		const edge_pix = this._edge_size * DEFAULT_STEP_PIX
-		const size_x = edge_pix * this._width
-		const size_y = edge_pix * this._height
-
+		const esize = this._edge_size
 		// draw vertical edges
-		for (var ix = 0; ix < this._width; ix++) {
-			let x = edge_pix * ix
-			r2d.drawLine(x, 0, x, size_y)
+		for (let ix = 0; ix < this._width; ix++) {
+			const x = esize * ix
+			r2d.drawLine(x, 0, x, esize * this._height)
 		}
 		// draw horizontal edges
-		for (var iy = 0; iy < this._height; iy++) {
-			let y = edge_pix * iy
-			r2d.drawLine(0, y, size_x, y)
+		for (let iy = 0; iy < this._height; iy++) {
+			const y = esize * iy
+			r2d.drawLine(0, y, esize * this._width, y)
 		}
 	}
 
 /*
 	drawPossiblePaths(r2d) {
-		let edge_pix = this._edge_size * DEFAULT_STEP_PIX
+		const esize = this._edge_size
 		this.forEachElement(this._edge, (e, x, y) => {
 				if (this.isEdgePassabe(x, y, 0)) {
 					if (this.isEdgePassabe(x, y, 1)) {
-						r2d.drawLine((x + 1)*edge_pix, (y+0.5)*edge_pix, (x+0.5)*edge_pix, y*edge_pix)
+						r2d.drawLine((x + 1)*esize, (y+0.5)*esize, (x+0.5)*esize, y*esize)
 					}
 					if (this.isEdgePassabe(x, y, 3)) {
-						r2d.drawLine(x*edge_pix, (y+0.5)*edge_pix, (x+0.5)*edge_pix, y*edge_pix)	
+						r2d.drawLine(x*esize, (y+0.5)*esize, (x+0.5)*esize, y*esize)	
 					}
 				}
 				if (this.isEdgePassabe(x, y, 2)) {
 					if (this.isEdgePassabe(x, y, 1)) {
-						r2d.drawLine((x + 1)*edge_pix, (y+0.5)*edge_pix, (x+0.5)*edge_pix, (y+1)*edge_pix)
+						r2d.drawLine((x + 1)*esize, (y+0.5)*esize, (x+0.5)*esize, (y+1)*esize)
 					}
 					if (this.isEdgePassabe(x, y, 3)) {
-						r2d.drawLine(x*edge_pix, (y+0.5)*edge_pix, (x+0.5)*edge_pix, (y+1)*edge_pix)	
+						r2d.drawLine(x*esize, (y+0.5)*esize, (x+0.5)*esize, (y+1)*esize)	
 					}
 				}
 		})
 	}
 */
 	drawEdges(r2d) {
-		const edge_pix = this._edge_size * DEFAULT_STEP_PIX
+		const esize = this._edge_size
 		this.forEachElement(this._edge, (e, x, y) => {
 			if (! this.isEdgePassabe(x, y, 3) && (x <= this._width)) {
-				r2d.drawLine((x + 1)*edge_pix, y*edge_pix, (x+1)*edge_pix, (y+1)*edge_pix)
+				r2d.drawLine((x + 1)*esize, y*esize, (x+1)*esize, (y+1)*esize)
 			}
 			if (! this.isEdgePassabe(x, y, 2) && (y <= this._height)) {
-				r2d.drawLine(x*edge_pix, (y+1)*edge_pix, (x+1)*edge_pix, (y+1)*edge_pix)
+				r2d.drawLine(x*esize, (y+1)*esize, (x+1)*esize, (y+1)*esize)
 			}
 		})
 	}
 
 	drawPaths(r2d) {
-		const edge_pix = this._edge_size * DEFAULT_STEP_PIX
+		const esize = this._edge_size
 		for (let path of this._paths) {
 			let pn = path[path.length - 1]
-			for (var i = path.length - 1; i > 0; i--) {
+			for (let i = path.length - 1; i > 0; i--) {
 				let p = path[i-1]
 				if (p) {
-					r2d.drawLine((pn[0]+0.5)*edge_pix, (pn[1]+0.5)*edge_pix, 
-						(p[0]+0.5)*edge_pix, (p[1]+0.5)*edge_pix)
+					r2d.drawLine((pn[0]+0.5)*esize, (pn[1]+0.5)*esize, 
+						(p[0]+0.5)*esize, (p[1]+0.5)*esize)
 					pn = p
 				}
 			}
@@ -270,9 +306,9 @@ export class CellsGrid {
 	}
 
 	drawCellMarker(r2d, x, y) {
-		const edge_pix = this._edge_size * DEFAULT_STEP_PIX		// edge length in pixels
-		const hms = Math.floor(DEFAULT_MARKER_SIZE / 2)			// half marker size
-		r2d.drawRect((x+0.5)*edge_pix - hms, (y+0.5)*edge_pix - hms, DEFAULT_MARKER_SIZE, DEFAULT_MARKER_SIZE)
+		const esize = this._edge_size
+		const hms = floor(DEFAULT_MARKER_SIZE / 2)			// half marker size
+		r2d.drawRect((x+0.5)*esize - hms, (y+0.5)*esize - hms, DEFAULT_MARKER_SIZE, DEFAULT_MARKER_SIZE)
 	}
 
 	draw(r2d) {

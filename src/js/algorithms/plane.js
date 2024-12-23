@@ -1,5 +1,5 @@
 /**
- * *** A curve decimating algorithm ***
+ * *** A curve decimating (simplification) algorithm ***
  * 
  * This file is for test & showcase of the algorithm of decimating on a curve Y = F(x).
  * 
@@ -38,7 +38,7 @@ $.strokeRect(0, 0,canvas_width, canvas_hight);
  * Mark the path points with rects
 */
 function markPathPoints(path) {
-	for (var i = 0; i < path.length; i++) {
+	for (let i = 0; i < path.length; i++) {
 		point = path[i];
 		$.strokeRect(point.x - point_halth_size, point.y - point_halth_size, point_size, point_size);
 	}
@@ -62,7 +62,7 @@ function drawPath(path) {
 	let point = path[0];
 	$.beginPath();
 	$.moveTo(point.x, point.y);
-	for (var i = 0; i < path.length; i++) {
+	for (let i = 0; i < path.length; i++) {
 		point = path[i];
 		$.lineTo(point.x, point.y);
 	}
@@ -128,9 +128,9 @@ function genRandomPath(n, delta_y) {
 	let x_step = (path_end_x - path_start_x) / n;
 	let y_step = (path_end_y - path_start_y) / n;
 
-	var seq = [{x: path_start_x, y: path_start_y}];
+	let seq = [{x: path_start_x, y: path_start_y}];
 
-	for (var i = 1; i <= n; i++) {
+	for (let i = 1; i <= n; i++) {
 		let x = path_start_x + x_step * i;
 		let y = path_start_y + y_step * i + delta_y * (0.5 - Math.random());
 		if (Math.random() > 0.9) {
@@ -168,7 +168,7 @@ function perpLength(x1, y1, x2, y2, x3, y3) {
 	return abs(x - x3) + abs(y - y3);
 }
 
-var pathseq = [];
+const pathseq = [];
 
 function addArrayElm(array, elm) {
 	array[array.length] = Object.assign({}, elm);
@@ -182,7 +182,7 @@ function algorithm(path) {
 	let pn = path[1];          // next pont
 	addArrayElm(pathseq, pc);
 
-	for(var i = 2; i < pathlen; i++) {
+	for(let i = 2; i < pathlen; i++) {
 		let pi = path[i];                       // index point
 		let d = perpLength(pc.x, pc.y, pn.x, pn.y, pi.x,  pi.y);
 		if (d > precision) {

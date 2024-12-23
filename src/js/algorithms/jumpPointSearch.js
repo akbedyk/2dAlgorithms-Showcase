@@ -74,7 +74,7 @@ export function buildPath(grid, goal_x, goal_y, inversed) {
 
 	let path = []
 	let ip = 0
-	for (var j = inversedPath.length - 1; j >= 0; j--) {
+	for (let j = inversedPath.length - 1; j >= 0; j--) {
 		path[ip] = inversedPath[j]
 		ip = ip + 1
 	}
@@ -109,7 +109,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 	const explored = []
 
 	// initializing grid:
-	for (var i = minx; i <= maxx; i++) {
+	for (let i = minx; i <= maxx; i++) {
 		grid[i] = []
 		explored[i] = []
 	}
@@ -150,7 +150,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 	 *  if the node is passable and not explored, add it to the list of neighbours
 	*/
 	function addNeighbours(x, y, iedge) {
-		for (var i = 0; i < iedge.length; i++) {
+		for (let i = 0; i < iedge.length; i++) {
 			const edge_index = iedge[i]
 			const nx = x + dxEdge(edge_index)
 			const ny = y + dyEdge(edge_index)
@@ -241,6 +241,11 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		return (px - x)*(px - x) + (py - y)*(py - y)
 	}
 
+	let startNode = [start_x, start_y, 0, 1]  // [x, y, previous index in reached, graph index in reached]
+	let open_list = [startNode,] // list of current opened nodes (points)
+	let oplen = open_list.length
+	let openmcount = 0
+
 	/**
 	 *  Open list is sorted from larger to smaller path distance (start point -> point (x, y)):
 	 *  open_list = [[x1, y1, larger distance], ..., [xn, yn, smaller distance]]
@@ -254,7 +259,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 			open_list[0] = p
 			return 0
 		}
-		for (var i = len - 1; i >= 0; i--) {
+		for (let i = len - 1; i >= 0; i--) {
 			let e = open_list[i]
 			// distance e: start -> (e[0],e[1]) -> goal
 			let de = e[2] + getDistance(e[0], e[1], goal_x, goal_y)
@@ -266,11 +271,6 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		open_list.splice(0, 0, p)
 		return 1
 	}
-
-	let startNode = [start_x, start_y, 0, 1]  // [x, y, previous index in reached, graph index in reached]
-	let open_list = [startNode,] // list of current opened nodes (points)
-	let oplen = open_list.length
-	let openmcount = 0
 
 	while (oplen > 0) {
 
@@ -288,7 +288,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		scanNeighbours(onx, ony)
 		//console.log(neighboursList)
 
-		for (var i = 0; i < neighboursList.length; i++) {
+		for (let i = 0; i < neighboursList.length; i++) {
 			const neighbour = neighboursList[i]
 			const nx = neighbour[0]
 			const ny = neighbour[1]
@@ -325,10 +325,10 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 			}
 		}
 		oplen = open_list.length
-		//console.log('Open list:', open_list)
+		console.log('Open list:', open_list)
 		console.log('open list len:', oplen, 'move count:', openmcount)
 /*
-		for (var i = 0; i < oplen; i++) {
+		for (let i = 0; i < oplen; i++) {
 			const p = open_list[i]
 			console.log('#', i, ': ', p[0], p[1], p[2], ' dist = ', getDistance(p[0], p[1], goal_x, goal_y))
 		}
