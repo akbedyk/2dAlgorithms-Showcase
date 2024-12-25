@@ -1,19 +1,22 @@
 
-# A curve decimating algorith
+# 2d algorithms showcase
 
- * This is test & showcase of the algorithm of decimating on a curve Y = F(x).
- * 
- * There are basic steps:
- * 1. Draw a random path function in X|Y Axis on the canvas
- * 2. Find key points
- * 3. Delete some garbage points
- * 4. Show results, calculate %
- *
- * This algorithm is close to the Ramer–Douglas–Peucker algorithm on a curve.
- * 
- * 2024 Mike Akbedyk (c)
+## === Pathfinding algorithms on 2d grid showcase ===
+ 
+    -> Jump Point pathfinding on the map with the cells grid
+    -> Dijkstra pathfinding
+ 
+## === 2d shape algorithms showcase === 
 
-
-
-
+    -> Random 2d line simplification
+    -> Jarvis alg for a shape 
+    -> Graham alg for a shape 
+    -> Shape simplification alg
+    -> Shape normailze, fill points,  sect
+    -> Intersect of 
+    -> Is point inside shape alg
+    
+## === Others 2d algorithms ===
+ 
+    A curve decimating (simplification) algorithm
 

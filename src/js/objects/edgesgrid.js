@@ -14,27 +14,7 @@ const DEFAULT_CELL_GRID_HEIGHT = 25
 const DEFAULT_EDGE_SIZE = 32
 const DEFAULT_MARKER_SIZE = 16
 
-export default class Cell {
-
-	constructor (x, y, z) {
-		this.x = x 		// om map x-coordinate of this cell
-	    this.y = y 		// om map y-coordinate of this cell
-	    this.z = z 		// om map z-coordinate of this cell (not used)
-		this._edge = [  // [x of the cell, y of the cell, edge index, edge length]
-			[x, y, 0, DEFAULT_EDGE_SIZE],
-			[x, y, 1, DEFAULT_EDGE_SIZE],
-			[x, y, 2, DEFAULT_EDGE_SIZE],
-			[x, y, 3, DEFAULT_EDGE_SIZE],
-		]
-	}
-
-	toString() {
-		return `Cell:{${this.x},${this.y},${this.z}}`
-	}
-}
-
-
-export class CellsGrid {
+export class EdgesGrid {
 
 	/*
 	CellsGrid(width, height, edge_size):
@@ -42,7 +22,8 @@ export class CellsGrid {
 		height : number
 		edge_size : number
 		cell   : 2d array[x][y] of cells
-		edge   : 2d array[x][y] of 4bit edge numbers
+		edg
+		e   : 2d array[x][y] of 4bit edge numbers
 	*/
 
 	/*
@@ -71,15 +52,16 @@ export class CellsGrid {
 
 		this._cell = Array(this._width)			// 2d array[x][y] of cells objects
 		this._edge = Array(this._width)			// 2d array[x][y] of edges numbers
+		this._z = Array(this._width)
 		this._paths = []
 
-		// fill arrays with cells & edges
+		// fill the cells & edges arrays
+		// block bounds edges
 		for (let ix = 0; ix < this._width; ix++) {
 			let cc = Array(this._height)
 			let ec = Array(this._height)
+			let zc = Array(this._height)
 			for (let iy = 0; iy < this._height; iy++) {
-				// build cells objects
-				cc[iy] = new Cell(ix, iy, 0)
 				let edges_4bit = 0b1111         // edge mask
 				// make the grid sides not passable
 				if (iy == 0) edges_4bit = edges_4bit & 0b1110
@@ -87,9 +69,12 @@ export class CellsGrid {
 				if (iy == this._height - 1) edges_4bit = edges_4bit & 0b1011
 				if (ix == this._width - 1) edges_4bit = edges_4bit & 0b0111
 				ec[iy] = edges_4bit
+				zc[iy] = 0
+				// build cells objects	cc[iy] = new Cell(ix, iy, 0)
 			}
-			this._cell[ix] = cc			// save cells objects column
 			this._edge[ix] = ec			// save edges numbers column
+			this._z[ix] = zc 			// save z-coordinates column
+			this._cell[ix] = cc			// save cells objects column
 		}
 	}
 
@@ -113,6 +98,10 @@ export class CellsGrid {
 		return this._edge
 	}
 
+	get z() {
+		return this._z
+	}	
+
 	forEachElement(array2d, func) {
 		for (let ix = 0; ix < this._width; ix++) {
 			let column = array2d[ix]
@@ -123,24 +112,7 @@ export class CellsGrid {
 	}
 
 	isEdgePassabe(x, y, edge_index) {
-		if (!this._edge[x]) console.log('this._edge[x] is undefind:', x, y)
 		return Boolean(this._edge[x][y] & (1 << edge_index))
-	}
-
-	edges_test() {
-		this.forEachElement(this._edge, (e, x, y) => {
-			let e1 = (e & 1 << 0) >> 0
-			let e2 = (e & 1 << 1) >> 1
-			let e3 = (e & 1 << 2) >> 2
-			let e4 = (e & 1 << 3) >> 3
-			console.log(x, y, 'edges pass:', e1, e2, e3, e4,
-				'isEdgePassabe:',
-				this.isEdgePassabe(x, y, 0),
-				this.isEdgePassabe(x, y, 1),
-				this.isEdgePassabe(x, y, 2),
-				this.isEdgePassabe(x, y, 3))
-			return 0
-		})
 	}
 
 	delEdge(x, y, edge_index) {
@@ -232,6 +204,12 @@ export class CellsGrid {
 		return path
 	}
 
+	randomShape() {
+		x = floor(random() * w)
+		y = floor(random() * h)
+
+	}
+
 	addPath(path) {
 		this._paths.push(path)
 	}
@@ -255,29 +233,6 @@ export class CellsGrid {
 		}
 	}
 
-/*
-	drawPossiblePaths(r2d) {
-		const esize = this._edge_size
-		this.forEachElement(this._edge, (e, x, y) => {
-				if (this.isEdgePassabe(x, y, 0)) {
-					if (this.isEdgePassabe(x, y, 1)) {
-						r2d.drawLine((x + 1)*esize, (y+0.5)*esize, (x+0.5)*esize, y*esize)
-					}
-					if (this.isEdgePassabe(x, y, 3)) {
-						r2d.drawLine(x*esize, (y+0.5)*esize, (x+0.5)*esize, y*esize)	
-					}
-				}
-				if (this.isEdgePassabe(x, y, 2)) {
-					if (this.isEdgePassabe(x, y, 1)) {
-						r2d.drawLine((x + 1)*esize, (y+0.5)*esize, (x+0.5)*esize, (y+1)*esize)
-					}
-					if (this.isEdgePassabe(x, y, 3)) {
-						r2d.drawLine(x*esize, (y+0.5)*esize, (x+0.5)*esize, (y+1)*esize)	
-					}
-				}
-		})
-	}
-*/
 	drawEdges(r2d) {
 		const esize = this._edge_size
 		this.forEachElement(this._edge, (e, x, y) => {

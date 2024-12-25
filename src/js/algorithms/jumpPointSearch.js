@@ -2,7 +2,6 @@
  * Jump Point Search - pathfinding algorithm
  * https://harablog.wordpress.com/2011/09/07/jump-point-search/
  *
- * File: jumpPointSearch.js
  * Mike Akbedyk 2024 (c)
 */
 
@@ -12,6 +11,7 @@ function normal(v) {
 	if (v > 0) return 1; else if (v < 0) return -1; else return 0
 }
 
+/*
 function jumpV(parent, dx, dy, v) {
 		let x = parent[0] + dx
 		let y = parent[1] + dy
@@ -39,40 +39,43 @@ function jumpV(parent, dx, dy, v) {
 		}
 		return jumpV([x, y], dx, dy, v)
 }
-
+*/
 
 export function buildPath(grid, goal_x, goal_y, inversed) {
 	if (! grid) {
-		console.log('pathfinder error: bad grid for buildPathByGrid')
+		console.error('pathfinder error: bad grid for buildPathByGrid')
 		return []
 	}
-	console.log('buildPath:', grid)
-	let inversedPath = [[goal_x, goal_y]]
-	let i = 1
+	//console.log('buildPath:', grid)
+	const inversedPath = [[goal_x, goal_y]]
+	let i = 0
 	let gx = grid[goal_x]
 	if (! gx) {
-		console.log('buildPath: NO PATH or goal_x is out of bounds:', goal_x)
-		return
+		console.info('buildPath: NO PATH or goal_x is out of bounds:', goal_x)
+		return null
 	}
 	let p = gx[goal_y]
 	if (! p) {
-		console.log('buildPath: NO PATH or goal_y is out of bounds:', goal_y)
-		return
+		console.info('buildPath: NO PATH or goal_y is out of bounds:', goal_y)
+		return null
 	}
-	while (p[0] != 0 && p[1] != 0 && p[2] > 0) {
-		console.log('buildPathByGrid:', p[0], p[1], p[2])
-		i = i + 1
-		inversedPath[i] = [p[0], p[1]]
-		if (! grid[p[1]]) 
-			console.log('bad grid[x][]', p[0], p[1])
-		else if (! grid[p[0]][p[1]]) { 
-			console.log('bad grid[x][y]', p[0], p[1])
+	let x, y
+	let d = 1
+	while (p && d > 0) {
+		x = p[0]
+		y = p[1]
+		console.log('buildPathByGrid:', x, y, p[2])
+		gx = grid[x]
+		if (!gx) {
+			//console.log('STOP! Bad grid[x][]', x, y)
+			break
 		}
-		p = grid[p[0]][p[1]]
+		p = gx[y]
+		i = i + 1
+		inversedPath[i] = [x, y]	
 	}
 	if (inversed) return inversedPath
-
-	let path = []
+	const path = []
 	let ip = 0
 	for (let j = inversedPath.length - 1; j >= 0; j--) {
 		path[ip] = inversedPath[j]
@@ -101,7 +104,8 @@ function getPath(start_x, start_y, goal_x, goal_y) {
 // Jump Point Search algorithm (JPS)
 // isPassable(x, y) // is callback function, return true, if node exist && is passable
 // getDistance(x1, y1, x2, y2)
-export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, getDistance, drawMarker, setColor) {
+export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, 
+	isPassable, getDistance, getCost, drawMarker, setColor) {
 
 	// grid node data:
 	// grid[node_x][node_y] = [parent node x, parent node y, distance to start node]
@@ -113,7 +117,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		grid[i] = []
 		explored[i] = []
 	}
-	grid[start_x][start_y] = [start_x, start_y, 0] // start node has no parent
+	grid[start_x][start_y] = [-1, -1, 0] // start node has no parent
 	explored[start_x][start_y] = true
 
 	setColor("blue")
@@ -170,7 +174,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 	function scanNeighbours(x, y) {
 		if (goal_x == x && goal_y == y) {
 			neighboursList.push([nx, ny])
-			console.log('!_Neighbour goal_!', nx, ny)	
+			console.error('!_Neighbour goal_!', nx, ny)	
 		}
 		if (goal_x > x) {
 			if (goal_y >= y) {
@@ -191,16 +195,10 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		}
 	}
 
-	function jump(parent, x, y) {
-		let px = parent[0]
-		let py = parent[1]
+	function jump(px, py, x, y) {
 		if (! isPassable(px, py, edgeDXDY(x - px, y - py))) return false
 		if (x == goal_x && y == goal_y) return [x, y]
-
-		//setColor("yellow")
-		//drawMarker(x, y)
 		explored[x][y] = true
-
 		if (x == px) {
 			if (y == py) {
 				console.log('jumpPointPath error: child = parent, (x, y) = (px, px)', x, y)
@@ -222,7 +220,7 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 				if (isPassable(x, y, 0) && (! isPassable(x, y - 1, 3) || ! isPassable(px, py, 0))) return [x, y]
 			}
 		}
-		return jump([x, y], 2*x - px, 2*y - py)  // x + dx = x + (x - px) = 2*x - px
+		return jump(x, y, 2*x - px, 2*y - py)  // x + dx = x + (x - px) = 2*x - px
 	}
 
 	function perp(x, y) {
@@ -230,31 +228,35 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		const dy = start_y - goal_y
 		if (dx == 0) return abs(start_x - x)
 		if (dy == 0) return abs(start_y - y)
+
 		// Y = F(x) koefficients a, b:   y = a * x + b
 		let a1 = dy / dx
 		let b1 = start_y - a1 * start_x
 		let a2 = -1/a1
 		let b2 = y - a2 * x
+
 		// (x; y) = the point on the line: p1 -- p2 -->, closest to the p3 point
 		let px = (b2 - b1) / (a1 - a2)
 		let py = a2 * x + b2
 		return (px - x)*(px - x) + (py - y)*(py - y)
 	}
 
-	let startNode = [start_x, start_y, 0, 1]  // [x, y, previous index in reached, graph index in reached]
-	let open_list = [startNode,] // list of current opened nodes (points)
-	let oplen = open_list.length
-	let openmcount = 0
+    let startNode = [start_x, start_y, 0, 1]  // [x, y, previous index in reached, graph index in reached]
+    let open_list = [startNode,]  // list of current opened nodes (points)
+    let oplen = open_list.length
+    let openmcount = 0	
 
 	/**
 	 *  Open list is sorted from larger to smaller path distance (start point -> point (x, y)):
 	 *  open_list = [[x1, y1, larger distance], ..., [xn, yn, smaller distance]]
 	 */
 	function open(x, y, d) {
+		//console.log('Open list:', open_list)
 		const len = open_list.length
 		const p = [x, y, d]
 		// distance p: start -> (x,y) -> goal
 		let dp = d + getDistance(x, y, goal_x, goal_y)
+		//console.log('Open node dist:', d, 'goal_dist:', getDistance(x, y, goal_x, goal_y), 'sum:', dp)
 		if (len == 0) {
 			open_list[0] = p
 			return 0
@@ -263,8 +265,10 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 			let e = open_list[i]
 			// distance e: start -> (e[0],e[1]) -> goal
 			let de = e[2] + getDistance(e[0], e[1], goal_x, goal_y)
+			//console.log('#', i, '[i]dist:', e[2], 'goal_dist:', getDistance(e[0], e[1], goal_x, goal_y), 'sum:', de)
 			if (de >= dp) { //(perp(x, y) > perp(e[0], e[1])) {
 				open_list.splice(i + 1, 0, p)
+				//console.log('Paste open node -> open list:', i + 1)
 				return 1
 			}
 		}
@@ -278,7 +282,6 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 		const onx = open_node[0]
 		const ony = open_node[1]
 		console.log('For point:', onx, ony)
-		//graph[onx][ony] = '0'
 		if (onx == goal_x && ony == goal_y) {
 			console.log('GOAL IS REACHED, return')
 			break
@@ -286,7 +289,6 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 
 		neighboursList = []
 		scanNeighbours(onx, ony)
-		//console.log(neighboursList)
 
 		for (let i = 0; i < neighboursList.length; i++) {
 			const neighbour = neighboursList[i]
@@ -295,44 +297,41 @@ export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, isPassable, ge
 
 			setColor("green")
 			drawMarker(nx,ny)
-			//console.log('Neibour point -> open_list:', nx, ny)
-			const d = grid[onx][ony][2] + getDistance(onx, ony, nx, ny)
-			grid[nx][ny] = [onx, ony, d] // set parent node
+			console.log('Neibour point -> open_list:', nx, ny)
+			const d = grid[onx][ony][2] + getCost(onx, ony, nx, ny)
+			grid[nx][ny] = [onx, ony, d]
 			openmcount = openmcount + open(nx, ny, d)
+			const dx = nx - onx
+			const dy = ny - ony
 
-			console.log('Jump to:', nx, ny, 'from:', onx, ony)
-			const jp = jump(open_node, nx, ny)
+			console.log('Jump from:', nx, ny, 'to:', nx + dx, ny + dy)
+			const jp = jump(nx, ny, nx + dx, ny + dy)
 			if (jp) {
 				const x = jp[0]
 				const y = jp[1]
+				/*
+				const parent = grid[x][y]
+				if (parent) {
+					const d = grid[onx][ony][2] + getCost(onx, ony, x, y)
+					if ((parent[0] != x || parent[1] != y) && parent[2] > d) {
+						//grid[x][y] = [onx, ony, d] // change parent node
+						console.error('Jump node:', x, y, d, 'but concurrent:', parent[0], parent[1], parent[2])
+					}
+				}
+				*/
 				if ((x != nx || y != ny) && (! grid[x][y])) {
-					const d = grid[onx][ony][2] + getDistance(onx, ony, x, y)
-					//const parent = grid[x][y]
-					//if parent {
-					//	if parent[0] ~= x or parent[1] ~= y && parent[2] > d {
-					//		grid[x][y] = [onx, ony, d] // change parent node
-					//		graph[x][y] = 'c'
-					//	}
-					//else
-						setColor("magenta")
-						drawMarker(x,y)
-						//console.log('Jump point -> open_list:', x, y)
-						grid[x][y] = [onx, ony, d] // set parent node
-						openmcount = openmcount + open(x, y, d)
-						//graph[x][y] = 'x'
-					//}
+					const d = grid[onx][ony][2] + getCost(onx, ony, x, y)
+					setColor("magenta")
+					drawMarker(x,y)
+					console.log('Jump point -> open_list:', x, y)
+					grid[x][y] = [onx, ony, d]
+					openmcount = openmcount + open(x, y, d)
 				}
 			}
 		}
 		oplen = open_list.length
-		console.log('Open list:', open_list)
+		//console.log('Open list:', open_list)
 		console.log('open list len:', oplen, 'move count:', openmcount)
-/*
-		for (let i = 0; i < oplen; i++) {
-			const p = open_list[i]
-			console.log('#', i, ': ', p[0], p[1], p[2], ' dist = ', getDistance(p[0], p[1], goal_x, goal_y))
-		}
-*/
 	}
 	return grid
 }
