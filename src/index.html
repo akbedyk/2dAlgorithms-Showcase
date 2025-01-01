@@ -7,12 +7,38 @@
 </head>
 <body>
 	<div id="control_panel">
-		<button id="Downward">Downward</button>
-		<button id="Pause">Pause</button>
-		<button id="Play">Play</button>
-		<button id="Stop">Stop</button>
-		<button id="Forward">Forward</button>
-		<button id="Shape">Shape</button>
+		<div id="project_selection">
+			<select id="select_project" default=7>
+				<option value=1>Map generator</option>
+				<option value=2>Vectors Product</option>
+				<option value=3>Polyline simplification</option>
+				<option value=4>Jarvis - wrapping gifts</option>
+				<option value=5>Graham - convex hull</option>
+				<option value=6>Quich Hull - convex edging</option>
+				<option value=7>AStar - pathfind</option>
+				<option value=8>Jump Point Search - pathfind</option>
+			</select>
+			<button id="Help">Help</button>
+		</div>
+		<div id="project_buttons">
+			<button id="Downward"><<</button>
+			<button id="Pause">Pause</button>
+			<button id="Play">Play</button>
+			<button id="Stop">Stop</button>
+			<button id="Forward">>></button>
+			<select id="select_speed" default=1>
+				<option value=0.1>x0.1</option>
+				<option value=0.2>x0.2</option>
+				<option value=0.5>x0.5</option>
+				<option value=1>x1</option>
+				<option value=2>x2</option>
+				<option value=5>x5</option>
+				<option value=10>x10</option>
+				<option value=100>x100</option>
+				<option value=1000>x1000</option>
+			</select>
+			<button id="Shape">Shape</button>
+		</div>
 	</div>
 	<div>
 		<canvas width="1000" height="600"></canvas>

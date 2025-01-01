@@ -28,6 +28,84 @@ function side(x1, y1, x2, y2, x3, y3) {
 
 /**
  *
+ *
+ */
+function fetchElm(array, indx) {
+	const last_elm = array.pop()
+	if (indx >= array.length) return last_elm
+	const elm = array[indx]
+	array[indx] = last_elm
+	return elm
+}
+
+/**
+ * Search for path point with max(or min) side
+ * 
+ * 
+ * @return number
+ */
+function sidePoint(path, i1, i2, minimum) {
+	const x1 = path[i1][0]
+	const y1 = path[i1][1]
+	const x2 = path[i2][0]
+	const y2 = path[i2][1]
+	let sign = minimum ? -1 : 1
+	let imax = 10e9 * sign
+	let mside
+
+	for (var i = path.length - 1; i >= 0; i--) {
+		if (i != i1 && i != i2) {
+			let ms = side(x1, y1, x2, y2, path[i][0], path[i][1])
+			if (sign * ms > sign * mside) {
+				mside = ms
+				imax = i
+			}
+		}
+	}
+	return imax
+}
+
+/**
+ *
+ *
+ */
+function findEdge(path, istart) {
+	const sp = path[istart] // start point
+	const len = path.length
+	for (let i = 0; i < len; i++) {
+		if (i != istart) {
+			const p = path[i]
+			for (let j = path.length - 1; j >= 0; j--) {
+				const np = path[j]
+				const ns = side(sp[0], sp[1], p[0], p[1], np[0], np[1])
+				//if (s * ns >= 0) 
+			}
+		}
+	}
+}
+
+/**
+ *
+ *
+ */
+function buildConvexPath(path) {
+	let len = path.length
+	if (len < 3) return null
+
+	const result = [pstart]
+	let ir = 1
+	let i = findEdge(path, 0)
+	while (i) {
+		ir = ir + 1
+		result[ir] = fetchElm(path, i)
+		i = findEdge(path, i)
+	}
+	return result
+}
+
+
+/**
+ *
 */
 function bypass(func, shape, istart) {
 	const path = shape.points
@@ -44,8 +122,7 @@ function bypass(func, shape, istart) {
 	for (let i = istart; length - 1; i++) {
 		p = path[i]
 		let sn = side(pnn[0], pnn[1], pn[0], pn[1], p[0], p[1])
-		if ((s*sn < 0) || !func(path, i))	
-		return i
+		if ((s*sn < 0) || !func(path, i)) return i
 		s = sn
 		p = pn
 		pnn = pn
@@ -64,13 +141,22 @@ function pCopy(a1, a2, astart, afinish, indx, d) {
 	return indx
 }
 
+
+
+
+
+
 /**
  * 
  * 
  */ 
 export class Shape {
 
-	constructor(path) {
+	constructor(path, form) {
+
+	}
+
+	strightConstruct(path, is_convex) {
 		const length = path.length
 		if (length < 3) {
 			console.log(path)
@@ -151,6 +237,10 @@ export class Shape {
 		for (let i = 0; i < this._p.length; i++) func(this._p[i], i)
 	}
 
+
+	/**
+	 *
+	*/
 	normalize() {
 		let np = []
 		for (let i = 0; i < this._p.length; i++) {
@@ -159,6 +249,11 @@ export class Shape {
 		return true
 	}
 
+
+	/**
+	 *
+	 * 
+	*/
 	simplificate(st) {
 
 	}
