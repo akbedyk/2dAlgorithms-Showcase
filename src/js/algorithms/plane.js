@@ -168,31 +168,30 @@ function perpLength(x1, y1, x2, y2, x3, y3) {
 	return abs(x - x3) + abs(y - y3);
 }
 
-const pathseq = [];
-
 function addArrayElm(array, elm) {
 	array[array.length] = Object.assign({}, elm);
 }
 
 function algorithm(path) {
-	let pathlen = path.length;
-	let c = 0;
-	let pc = path[0];          // current point
-	let n = 1;
-	let pn = path[1];          // next pont
-	addArrayElm(pathseq, pc);
+	const pathseq = []
+	let pathlen = path.length
+	let c = 0
+	let pc = path[0]           // current point
+	let n = 1
+	let pn = path[1]           // next pont
+	addArrayElm(pathseq, pc)
 
 	for(let i = 2; i < pathlen; i++) {
 		let pi = path[i];                       // index point
 		let d = perpLength(pc.x, pc.y, pn.x, pn.y, pi.x,  pi.y);
 		if (d > precision) {
-			pc = path[i-1];
-			pn = pi;
-			addArrayElm(pathseq, pc);
-		};
-	};
-	addArrayElm(pathseq, path[pathlen - 1]);
-	return true;
+			pc = path[i-1]
+			pn = pi
+			addArrayElm(pathseq, pc)
+		}
+	}
+	addArrayElm(pathseq, path[pathlen - 1])
+	return pathseq
 }
 
 const path_1 = genRandomPath(50, 10);

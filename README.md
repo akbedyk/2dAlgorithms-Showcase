@@ -1,22 +1,21 @@
 
 # 2d algorithms showcase
 
-## === Pathfinding algorithms on 2d grid showcase ===
+## === Pathfinding algorithms ===
  
-    -> Jump Point pathfinding on the map with the cells grid
+    -> AStar pathfinding
     -> Dijkstra pathfinding
- 
-## === 2d shape algorithms showcase === 
-
-    -> Random 2d line simplification
-    -> Jarvis alg for a shape 
-    -> Graham alg for a shape 
-    -> Shape simplification alg
-    -> Shape normailze, fill points,  sect
-    -> Intersect of 
-    -> Is point inside shape alg
+    -> Jump Point pathfinding on the map with the cells grid
     
-## === Others 2d algorithms ===
- 
-    A curve decimating (simplification) algorithm
+## === 2d shapes algorithms === 
 
+    -> Vectors product & segments intersection
+    -> Random 2d line simplification
+    -> Jarvis alg for a random points set 
+    -> Graham alg for a random points set
+    -> Quick Hull alg for a random points set
+    -> Shape decimating (simplification) alg
+    -> Shape functions: 
+        - normailze
+        - bypass all points (on the perimetr or inside the shape area)
+        - is point inside the shape

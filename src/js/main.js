@@ -7,8 +7,8 @@
  * === 2d shape algorithms showcase === 
  * 
  * -> Random 2d line simplification
- * -> Jarvis alg for a shape 
- * -> Graham alg for a shape 
+ * -> Jarvis alg for a shape
+ * -> Graham alg for a shape
  * -> Shape simplification alg
  * -> Shape normailze, fill points,  sect
  * -> Intersect of 
@@ -22,100 +22,64 @@
  * ********************************************************
 */
 
-import {Render2d, Scene} from "./render2d.js"
-import {Shape} from "./objects/shape.js"
-import {EdgesGrid} from "./objects/EdgesGrid.js"
-import {JPS, buildPath} from "./algorithms/jumpPointSearch.js"
+import {HMap} from './projects/HMap.js'
+import {VProduct} from './projects/vProduct.js'
+import {Simpl} from './projects/Simpl.js'
+import {Jarvis} from './projects/Jarvis.js'
+import {Graham} from './projects/Graham.js'
+import {QuickHull} from './projects/QuickHull.js'
+import {AStar} from './projects/AStar.js'
+import {JPS} from './projects/JPS.js'
 
-const abs = Math.abs
-const random = Math.random
-const floor = Math.floor
+import {Render2d, Scene} from './render/render2d.js'
 
-const r2d = new Render2d(document.querySelector("canvas"))
-const scene = new Scene()
-
-/*
-    let startNode = [start_x, start_y, 0, 1]  // [x, y, previous index in reached, graph index in reached]
-    let open_list = [startNode,] // list of current opened nodes (points)
-    let oplen = open_list.length
-    let openmcount = 0
-
-    function openListContain(x,y) {
-        //console.log('Check open_list for:', x, y)
-        let i = 0
-        for (const p of open_list) {
-            i++
-            //console.log('#', i, 'open_list:', p[0], p[1], p[2])
-            if (p[0] == x && p[1] == y) return p
-        }
-    }
-    if (openListContain(x,y)) console.error('JPS error. Open list inclides:', p)
-*/
-
-let egrid, grid, shape
-const EDGES_NUM = 500
-
-function restart() {
-    console.clear()
-    r2d.clear()
-    egrid = new EdgesGrid()
-    egrid.addRandomEdges(EDGES_NUM)
-    scene.add(egrid)
-    egrid.draw(r2d)
-}
-
-restart()
+const ren2d = new Render2d(document.querySelector('canvas'))
 
 
-let b1 = document.getElementById("Downward").onclick = function() {
-    restart()
-}
-let b2 = document.getElementById("Pause").onclick = function() {
-    console.log('PAUSE')
-}
-let b3 = document.getElementById("Play").onclick = function() {
-    const max = egrid.height - 1
-    grid =  JPS(0, max, 0, 0, max, max,
-        // isPassable
-                (x, y, ie) => {
-                    if((x >= 0) && (x <= max) && (y >= 0) && (y <= max)) 
-                    return egrid.isEdgePassabe(x,y,ie)
-                    else return false
-                },
-        // getDistance
-                (x1, y1, x2, y2) => { 
-                    return Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1))
-                },
-        // getCost
-                (x1, y1, x2, y2) => { 
-                    return abs(x2 - x1) + abs(y2 - y1)
-                },
-        // drawMarker
-                (x,y) => { 
-                    egrid.drawCellMarker(r2d,x,y)
-                },
-        // setColor
-                (style) => { 
-                    r2d.setStrokeStyle(style)
-                })
-    console.log('Grid:', grid)
-}
-let b4 = document.getElementById("Stop").onclick = function() {
-    const max = egrid.height - 1
-    const path = buildPath(grid, max, max,)
-    console.log('Path:', path)
-    if (path) {
-        r2d.setStrokeStyle('blue')
-        egrid.addPath(path)
-        egrid.drawPaths(r2d)
+// creating projects
+
+const project_HMap = new HMap('project_HeightMap', ren2d)
+const project_VProd = new VProduct('project_VProd', ren2d)
+const project_Simpl = new Simpl('project_Simpl', ren2d)
+const project_Jarvis = new Jarvis('project_Jarvis', ren2d)
+const project_Graham = new Graham('project_Graham', ren2d)
+const project_QH = new QuickHull('project_QuickHull', ren2d)
+const project_AStar = new AStar('project_AStar', ren2d)
+const project_JPS = new JPS('project_JumpPointSearch', ren2d)
+
+
+// building projects on the "<select>" html node
+
+let select_project = document.getElementById('select_project')
+select_project.addEventListener('change', buildCurrentProject)
+
+function buildCurrentProject() {
+    switch (select_project.value) {
+        case '1': 
+            project_HMap.build()
+            break
+        case '2': 
+            project_VProd.build()
+            break
+        case '3': 
+            project_Simpl.build()
+            break
+        case '4': 
+            project_Jarvis.build()
+            break
+        case '5': 
+            project_Graham.build()
+            break
+        case '6': 
+            project_QH.build()
+            break
+        case '7': 
+            project_AStar.build()
+            break
+        case '8': 
+            project_JPS.build()
+            break
     }
 }
-let b5 = document.getElementById("Forward").onclick = function() {
-    restart()
-}
 
-let b6 = document.getElementById("Shape").onclick = function() {
-    shape = new Shape(egrid.randomPath(floor(random()*5 + 3)))
-    egrid.addPath(shape.points)
-    egrid.drawPaths(r2d)
-}
+buildCurrentProject()

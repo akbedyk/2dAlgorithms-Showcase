@@ -23,19 +23,24 @@ export class Scene {
 const DEFAULT_CANVAS_WIDTH = 1000
 const DEFAULT_CANVAS_HEIGHT = 1000
 const DEFAULT_ZOOM = 1
+const DEFAULT_NODE_PIX = 10
 
 export class Render2d {
 	
-	constructor(canvas, zoom) {
+	constructor(canvas, zoom = DEFAULT_ZOOM) {
 		this.canvas = canvas
 		this.canvas.width = DEFAULT_CANVAS_WIDTH
 		this.canvas.height = DEFAULT_CANVAS_HEIGHT
-		this._zoom = zoom || DEFAULT_ZOOM
+		this._zoom = zoom
 		//this.$.scale(zoom, zoom)
 		this._config = {}
 
 		this.$ = canvas.getContext('2d')
-		this.$.strokeRect(0, 0, canvas.width, canvas.height)
+		//this.$.strokeRect(0, 0, canvas.width, canvas.height)
+	}
+
+	newScene() {
+		return new Scene()
 	}
 
 	get zoom() {
@@ -79,8 +84,18 @@ export class Render2d {
 		this._config
 	}
 
+	setFont(font, baseLineType = 'top') {
+		this.$.font = font
+		this.$.textBaseline = baseLineType
+	}
+
+	strokeText(text, x, y) {
+		this.$.strokeText(text, x, y)
+	}
+
 	drawRect(x, y, w, h) {
-		this.$.strokeRect(x, y, w, h)
+		const zoom = this._zoom
+		this.$.strokeRect(x, y, w * zoom, h * zoom)
 	}
 
 	drawLine(x1, y1, x2, y2) {
@@ -92,20 +107,31 @@ export class Render2d {
 	}
 
 	// draw path line
-	drawPath(path, locked) {
+	drawPath(path, locked = false) {
 		const zoom = this._zoom
 		let start = path[0]
-		this.$.strokeStyle = 'black'
 		this.$.beginPath()
 		this.$.moveTo(start[0] * zoom, start[1] * zoom)
-		for (let i = 0; i < path.length; i++) {
+		for (let i = path.length - 1; i >= 0; i--) {
 			let point = path[i]
 			if (point) {
-				this.$.lineTo(x * zoom, y * zoom)
+				this.$.lineTo(point[0] * zoom, point[1] * zoom)
 			}
 		}
 		if (locked) this.$.lineTo(start[0] * zoom, start[1] * zoom)
 		this.$.stroke()
+	}
+
+	drawPathNodes(path, w = DEFAULT_NODE_PIX, h = DEFAULT_NODE_PIX) {
+		const zoom = this._zoom
+		w = w * zoom
+		h = h * zoom
+		for (let i = path.length - 1; i >= 0; i--) {
+			let point = path[i]
+			if (point) {
+				this.$.strokeRect(point[0], point[1], w, h)
+			}
+		}
 	}
 
 	/**
@@ -160,12 +186,13 @@ export class Render2d {
 		this.drawLine(x1 * zoom, y1 * zoom, x2 * zoom, y2 * zoom)
 	}
 
+/*
 	draw(obj) {
 		switch (obj.type) {
 
 		}
 	}
-/*
+
 	drawAll() {
 		for (obj of this.scene.getObjList()) {
 			switch (obj.type) {

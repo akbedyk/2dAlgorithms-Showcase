@@ -46,7 +46,7 @@ export function buildPath(grid, goal_x, goal_y, inversed) {
 		console.error('pathfinder error: bad grid for buildPathByGrid')
 		return []
 	}
-	//console.log('buildPath:', grid)
+	console.log('Grid:', grid)
 	const inversedPath = [[goal_x, goal_y]]
 	let i = 0
 	let gx = grid[goal_x]
@@ -56,7 +56,7 @@ export function buildPath(grid, goal_x, goal_y, inversed) {
 	}
 	let p = gx[goal_y]
 	if (! p) {
-		console.info('buildPath: NO PATH or goal_y is out of bounds:', goal_y)
+		console.info('buildPath: NO PATH or goal_y is out of bounds:', goal_y, p, gx)
 		return null
 	}
 	let x, y
@@ -104,7 +104,7 @@ function getPath(start_x, start_y, goal_x, goal_y) {
 // Jump Point Search algorithm (JPS)
 // isPassable(x, y) // is callback function, return true, if node exist && is passable
 // getDistance(x1, y1, x2, y2)
-export function JPS(minx, maxx, start_x, start_y, goal_x, goal_y, 
+export function jumpPointSearch(minx, maxx, start_x, start_y, goal_x, goal_y, 
 	isPassable, getDistance, getCost, drawMarker, setColor) {
 
 	// grid node data:
