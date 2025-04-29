@@ -27,14 +27,14 @@ export class Simpl extends Project {
 		this._random_path = genRandomPath(SCREEN_WIDTH, SCREEN_HEIGHT, POINTS_NUM, POINTS_DELTA)
 		this._render.drawPath(this._random_path)
 		this._render.setStrokeStyle('blue')
-		this._render.drawPathNodes(this._random_path, 6, 6)
+		this._render.drawPathNodes(this._random_path)
 	}
 
 	play() {
 		console.log('Simpl PLAY')
-		const pathseq = simpl(this._random_path, PRECISION)
+		const path = simpl(this._random_path, PRECISION)
 		this._render.setStrokeStyle('red')
-		this._render.drawPathNodes(pathseq, 12, 12)
+		this._render.drawPathNodes(path, 12, 12)
 	}
 
 	pause() {

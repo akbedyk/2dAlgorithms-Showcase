@@ -12,7 +12,7 @@ function perpLength(x1, y1, x2, y2, x3, y3) {
 	if (dx == 0) return abs(x1 - x3);
 	if (dy == 0) return abs(y1 - y3);
 
-	// Y = F(x) koefficients a, b:   y = a * x + b
+	// Y = F(x):   y = a * x + b
 	let a1 = dy / dx;
 	let b1 = y1 - a1 * x1;
 	let a2 = -1/a1
@@ -21,10 +21,7 @@ function perpLength(x1, y1, x2, y2, x3, y3) {
 	// (x; y) = the point on the line: p1 -- p2 -->, closest to the p3 point
 	let x = (b2 - b1) / (a1 - a2);
 	let y = a2 * x + b2;
-/*
-	setStrokeStyle('magenta');
-	drawLine(x, y, x3, y3);
-*/
+
 	return abs(x - x3) + abs(y - y3);
 }
 
