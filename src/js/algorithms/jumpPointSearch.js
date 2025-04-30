@@ -1,8 +1,8 @@
 /*
  * Jump Point Search - pathfinding algorithm
- * https://harablog.wordpress.com/2011/09/07/jump-point-search/
+ * Source: https://harablog.wordpress.com/2011/09/07/jump-point-search/
  *
- * Mike Akbedyk 2024 (c)
+ * implementation by Mike Akbedyk 2024 (c)
 */
 
 const abs = Math.abs
@@ -101,9 +101,11 @@ function getPath(start_x, start_y, goal_x, goal_y) {
 }
 
 
-// Jump Point Search algorithm (JPS)
-// isPassable(x, y) // is callback function, return true, if node exist && is passable
-// getDistance(x1, y1, x2, y2)
+/** Jump Point Search algorithm (JPS)
+ * isPassable(x, y) // is callback function, return true, if node exist && is passable
+ * getDistance(x1, y1, x2, y2)
+ * getCost(x1, y1, x2, y2)
+ */ 
 export function jumpPointSearch(minx, maxx, start_x, start_y, goal_x, goal_y, 
 	isPassable, getDistance, getCost, drawMarker, setColor) {
 

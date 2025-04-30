@@ -20,10 +20,10 @@ export class Scene {
 
 }
 
-const DEFAULT_CANVAS_WIDTH = 1000
-const DEFAULT_CANVAS_HEIGHT = 1000
+const DEFAULT_CANVAS_WIDTH = document.getElementById('canvas_map').width || 600
+const DEFAULT_CANVAS_HEIGHT = document.getElementById('canvas_map').height || 1000
 const DEFAULT_ZOOM = 1
-const DEFAULT_NODE_PIX = 10
+const DEFAULT_NODE_PX = 10
 
 export class Render2d {
 	
@@ -122,7 +122,7 @@ export class Render2d {
 		this.$.stroke()
 	}
 
-	drawPathNodes(path, w = DEFAULT_NODE_PIX, h = DEFAULT_NODE_PIX) {
+	drawPathNodes(path, w = DEFAULT_NODE_PX, h = DEFAULT_NODE_PX) {
 		const zoom = this._zoom
 		w = w * zoom
 		h = h * zoom

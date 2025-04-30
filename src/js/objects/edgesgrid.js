@@ -13,6 +13,7 @@ const DEFAULT_CELL_GRID_WIDTH = 25
 const DEFAULT_CELL_GRID_HEIGHT = 25
 const DEFAULT_EDGE_SIZE = 32
 const DEFAULT_MARKER_SIZE = 16
+const EDGE_4BIT_MASK = 0b1111        // edges mask: everyone of 4 edges is passable
 
 export class EdgesGrid {
 
@@ -62,7 +63,7 @@ export class EdgesGrid {
 			let ec = Array(this._height)
 			let zc = Array(this._height)
 			for (let iy = 0; iy < this._height; iy++) {
-				let edges_4bit = 0b1111         // edge mask
+				let edges_4bit = 0b1111         // edge mask - all edges are passable
 				// make the grid sides not passable
 				if (iy == 0) edges_4bit = edges_4bit & 0b1110
 				if (ix == 0) edges_4bit = edges_4bit & 0b1101
@@ -133,6 +134,20 @@ export class EdgesGrid {
 				this._edge[x][y] &= 0b0111
 				this._edge[x+1][y] &= 0b1101
 		}
+	}
+
+	releaseEdges(x, y) {
+		if ((x < 1) || (y < 1) || (x > this.width - 2) || (y > this.height - 2)) {
+			Error('releaseEdges: (x, y) out of bounds: (' + x + ', ' + y + ')')
+		}
+		this._edge[x][y] = EDGE_4BIT_MASK
+	}
+
+	blockEdges(x, y) {
+		if ((x < 1) || (y < 1) || (x > this.width - 2) || (y > this.height - 2)) {
+			Error('blockEdges: (x, y) out of bounds: (' + x + ', ' + y + ')')
+		}
+		this._edge[x][y] = 0
 	}
 
 	addRandomEdges(density) {

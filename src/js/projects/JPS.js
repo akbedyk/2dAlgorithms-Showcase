@@ -35,6 +35,31 @@ export class JPS extends Project {
 	    this._egrid.draw(this._render)
 	}
 
+	getZcost(x1, y1, x2, y2) {
+		const z = this._egrid.z
+		let zcost = 0
+		let pz = z[x1][y1]
+		let nz
+		if (x1 != x2) {
+			let dx = 1
+			if (x1 > x2) dx = -1
+			for (let xi = x1; xi != x2; xi += dx) {
+				nz = z[xi][y1]
+				if (nz > pz) zcost += nz - pz
+				pz = nz
+			}
+		} else {
+			let dy = 1
+			if (y1 > y2) dy = -1
+			for (let yi = y1; yi != y2; yi += dy) {
+				nz = z[x1][yi]
+				if (nz > pz) zcost += nz - pz
+				pz = nz
+			}
+		}
+		return zcost
+	}
+
 	play() {
 	    const max = this._egrid.height
 	    const sx = floor(random()*max)
@@ -54,7 +79,7 @@ export class JPS extends Project {
 	                },
 	        // getCost
 	                (x1, y1, x2, y2) => { 
-	                    return abs(x2 - x1) + abs(y2 - y1)
+	                    return abs(x2 - x1) + abs(y2 - y1) + 5*getZcost(x1, y1, x2, y2)
 	                },
 	        // drawMarker
 	                (x,y) => { 

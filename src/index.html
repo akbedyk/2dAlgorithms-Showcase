@@ -9,14 +9,17 @@
 	<div id="control_panel">
 		<div id="project_selection">
 			<select id="select_project" default=7>
-				<option value=1>Map generator</option>
-				<option value=2>Vectors Product</option>
-				<option value=3>Polyline simplification</option>
-				<option value=4>Jarvis - wrapping gifts</option>
-				<option value=5>Graham - convex hull</option>
-				<option value=6>Quich Hull - convex edging</option>
-				<option value=7>AStar - pathfind</option>
-				<option value=8>Jump Point Search - pathfind</option>
+				<option value=0>Map generator</option>
+				<option value=1>Vectors Product</option>
+				<option value=2>Polyline simplification</option>
+				<option value=3>Gauss simplification</option>
+				<option value=4>Viasvalding simplification</option>
+				<option value=5>Jarvis - wrapping gifts</option>
+				<option value=6>Graham - convex hull</option>
+				<option value=7>Quich Hull - convex edging</option>
+				<option value=8>AStar - pathfind</option>
+				<option value=9>Jump Point Search - pathfind</option>
+				<option value=10>Z-paths - pathfind</option>
 			</select>
 			<button id="Help">Help</button>
 		</div>
@@ -41,7 +44,7 @@
 		</div>
 	</div>
 	<div>
-		<canvas width="1000" height="600"></canvas>
+		<canvas id="canvas_map" width="1000" height="600"></canvas>
 	</div>
 	<script type="module" src="./js/main.js"></script>
 </body>

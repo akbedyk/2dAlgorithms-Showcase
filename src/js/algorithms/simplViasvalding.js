@@ -1,29 +1,40 @@
 /*
 ### Алгоритм Висвалдинга (Visvalingam's Algorithm)  
 
-Этот метод основан на удалении наименее значимых точек. 
-Описание: 
+Этот метод основан на удалении наименее значимых точек. Например, если у нас есть кривая, и одна из точек образует треугольник с минимальной площадью, то эта точка будет удалена, и процесс продолжится до достижения желаемого уровня упрощения.
 
+Описание: 
     Входные данные : Набор точек, представляющих кривую.
     Шаг 1 : Для каждой точки вычислить площадь треугольника, образованного этой точкой и её соседями.
     Шаг 2 : Удалить точку с наименьшей площадью треугольника.
     Шаг 3 : Повторять шаг 2 до тех пор, пока не будет достигнут нужный уровень упрощения или количество точек не станет равным заданному числу.
-     
-Пример: 
-Если у нас есть кривая, и одна из точек образует треугольник с минимальной площадью, то эта точка будет удалена, и процесс продолжится до достижения желаемого уровня упрощения. 
+
+Пример использования:
+```js
+const points = Array.from({ length: 100 }, (_, i) => ({
+    x: i,
+    y: Math.sin(i / 10) + Math.random() * 0.1 // Пример данных
+}));
+
+const simplificationLevel = 50; // Уровень упрощения в процентах
+const simplifiedPoints = visvalingamSimplification(points, simplificationLevel);
+
+console.log('Исходные точки:', points);
+console.log('Упрощённые точки:', simplifiedPoints);
+```
 */
 
 // Функция для вычисления площади треугольника, образованного тремя точками
 function triangleArea(p1, p2, p3) {
     return Math.abs(
-        p1.x * (p2.y - p3.y) +
-        p2.x * (p3.y - p1.y) +
-        p3.x * (p1.y - p2.y)
+        p1[0] * (p2[1] - p3[1]) +
+        p2[0] * (p3[1] - p1[1]) +
+        p3[0] * (p1[1] - p2[1])
     ) / 2;
 }
 
 // Алгоритм Висвалдинга для упрощения кривой
-function visvalingamSimplification(points, simplificationLevel) {
+export function visvalingSimplification(points, simplificationLevel) {
     let n = points.length;
     if (n < 3) return points; // Если точек меньше трёх, ничего не упрощаем
 
@@ -60,18 +71,5 @@ function visvalingamSimplification(points, simplificationLevel) {
             areas[minIndex] = triangleArea(points[minIndex - 1], points[minIndex], points[minIndex + 1]);
         }
     }
-
     return points;
 }
-
-// Пример использования
-const points = Array.from({ length: 100 }, (_, i) => ({
-    x: i,
-    y: Math.sin(i / 10) + Math.random() * 0.1 // Пример данных
-}));
-
-const simplificationLevel = 50; // Уровень упрощения в процентах
-const simplifiedPoints = visvalingamSimplification(points, simplificationLevel);
-
-console.log('Исходные точки:', points);
-console.log('Упрощённые точки:', simplifiedPoints);
